@@ -1,227 +1,333 @@
-
-**“The Eternal Equation”**
-
-
----
+# The Eternal Equation
 
 ## Core Theme
 
-inspired by **Frieren: Beyond Journey’s End**
+inspired by Frieren: Beyond Journey’s End  
+(sorry im autistic :>)
 
-> **Time passes. People fade. Knowledge remains.** (i used ai to cook this up btw.)
+> Time passes. People fade. Knowledge remains.
+
+This is not a fast game.  
+This is not a loud game.  
+This is a game about things breaking slowly.
+
 ---
 
-# PROLOGUE The World After the Heroes
+## PROLOGUE  
+### The World After the Heroes
 
 Long ago, a party of heroes saved the world.
-The demon king fell.
-Songs were sung.
-Statues were carved.
 
-Then… **time moved on**.
+The demon king fell.  
+People celebrated.  
+Songs were sung very loudly.  
+Statues were carved in places no one visits anymore.
 
-You are **Aeris**, an elf mage who ages slowly, watching centuries pass like pages in a book. You also recruit a pretty little cupcake with yourself.
+Then time moved on.  
+Like it always does.
+
+You are **Aeris**, an elf mage.  
+You age slowly, which sounds cool until everyone you know doesn’t.
+
+Centuries pass like badly written diary pages.
+
+You also don’t travel alone anymore.  
+At some point, you picked up a small companion.  
+They’re cheerful.  
+A little stupid.  
+Kind of a cupcake of a person.
+
+They make the long years feel shorter.
 
 The heroes you once traveled with:
 
-* The warrior is a name on stone
-* The priest is a memory
-* The mathematician-sage is forgotten entirely
+- The warrior is a name carved into stone  
+- The priest exists only in stories that change every time they’re told  
+- The mathematician-sage is forgotten entirely  
 
-Only **you** remain.
+That part still bothers you.
+
+Only you remain.
 
 ---
 
 ### Opening Scene
 
-```text
 The world is peaceful.
 
 Too peaceful.
 
-You stand before an old statue.
+You stand in front of an old statue.
 Its inscription has faded.
 
 You try to remember who it honored.
+
 You cannot.
-```
+
+
+You pretend that doesn’t hurt.
 
 ---
 
-## The Central Mystery — The Eternal Equation
+## The Central Mystery  
+### The Eternal Equation
 
-Long before demons, long before heroes, the world ran on something called:
+Before demons.  
+Before heroes.  
+Before kingdoms that don’t exist anymore.
 
-> **The Eternal Equation**
+There was something else.
+
+People called it:
+
+**The Eternal Equation**
 
 It governed:
 
-* Balance of mana
-* Flow of time
-* Stability of reality
+- The balance of mana  
+- The flow of time  
+- Why things didn’t just fall apart immediately  
 
-Not a spell.
-Not a god.
-A **truth**, expressed in mathematics.
+It wasn’t magic.  
+It wasn’t a god.
 
-When the heroes fought the Demon King, the Equation was **fractured**.
+It was a truth.  
+Written down in numbers.
 
-The world survives — but slowly decays.
+When the heroes fought the Demon King, something went wrong.
+The Equation fractured.
 
-Villages forget.
-Bridges collapse.
-Magic becomes unstable.
+Not shattered.
+Just… cracked.
 
-# WORLD STRUCTURE
+The world survived.  
+But now it decays in quiet ways.
 
-Each region contains a **Fragment of the Equation**
-Each fragment is locked behind a **math concept**
+Villages forget things.  
+Bridges collapse a little too early.  
+Magic behaves strangely, like it forgot its own rules.
+
+Most people don’t notice.
+
+You do.
 
 ---
 
-## Region 1: The Village of Fading Numbers
+## WORLD STRUCTURE
 
-**Math Theme:** Addition & Subtraction
-**Mood:** Quiet, gentle sadness
+The Equation split into fragments.  
+Each fragment drifted somewhere else.
 
-### Story
+Each one is locked behind something simple.
+Something everyone thinks they understand.
 
-Villagers can no longer count supplies correctly.
-No one starves but no one remembers why food runs out.
+Math.
 
-An old shopkeeper says:
+---
+
+## Region 1  
+### The Village of Fading Numbers
+
+**Math Theme:** Addition & Subtraction  
+**Mood:** Quiet. Tired. Slightly sad.
+
+#### Story
+
+The villagers struggle with counting.
+
+Not in an obvious way.  
+They just… get it wrong.
+
+Food disappears sooner than expected.  
+Trades never feel fair.  
+No one starves, but no one understands why supplies keep running out.
+
+An old shopkeeper sighs and says:
 
 > “Numbers don’t feel… solid anymore.”
 
-### Trial
+You know what he means.
 
-To stabilize the village:
+#### Trial
 
-* Restore **basic arithmetic**
-* Fix broken ledgers
-* Rebalance trades
+To stabilize the village, you must:
 
-### Reward
+- Restore basic arithmetic  
+- Fix broken ledgers  
+- Rebalance small trades that shouldn’t matter, but do  
+
+#### Reward
 
 **Spell Unlocked:** *Summation Light*
 
-> “Adds what was once lost.”
+> Adds what was once lost.  
+> Sometimes that’s numbers.  
+> Sometimes it’s something else.
 
 ---
 
-## Region 2: The Forest of Repeating Paths
+## Region 2  
+### The Forest of Repeating Paths
 
-**Math Theme:** Multiplication & Patterns
-**Mood:** Confusing, dreamlike
+**Math Theme:** Multiplication & Patterns  
+**Mood:** Dreamlike. Annoying. A little funny.
 
-### Story
+#### Story
 
-Paths loop endlessly.
-Travelers swear they walked straight — yet returned to the start.
+Paths in the forest loop.
 
-The forest obeys **patterns**, not direction.
+People swear they walked straight.
+They swear it was only five minutes.
 
-### Trial
+They still come back to the same tree.
 
-* Recognize repeating sequences
-* Predict growth
-* Break infinite loops
+The forest doesn’t care about direction.  
+It cares about patterns.
 
-### Lore Line
+Your companion keeps getting confused and blaming the trees.
 
-> “Nature does not count like humans do. It multiplies.”
+#### Trial
+
+- Identify repeating sequences  
+- Predict growth instead of counting steps  
+- Break loops that feel endless  
+
+#### Lore
+
+> “Nature does not count like humans do.  
+> It multiplies.”
+
+You think the sage would’ve liked this place.
 
 ---
 
-## Region 3: Ruins of the Forgotten Sage
+## Region 3  
+### Ruins of the Forgotten Sage
 
-**Math Theme:** Algebra
-**Mood:** Ancient, reverent
+**Math Theme:** Algebra  
+**Mood:** Quiet. Heavy. Respectful.
 
-### Story
+#### Story
 
-These ruins belonged to the **fourth hero** —
-the one erased from history.
+These ruins belonged to the fourth hero.
 
-His name no longer exists.
+The one history forgot.
 
-He believed:
+No songs.  
+No statues.  
+No name.
+
+Only equations carved into stone walls.
+
+He believed something very simple:
 
 > “Equations outlive people.”
 
-### Trial
+He was right.
 
-* Solve for unknowns
-* Restore missing variables
-* Balance broken formulas etched in stone
+#### Trial
 
-### Emotional Hit
+- Solve for unknown values  
+- Restore missing variables  
+- Balance equations that have been broken for centuries  
 
-You find a carving:
+#### Moment
 
-> “To whoever finds this —
+You find a small carving, hidden behind debris:
+
+> “To whoever finds this —  
 > I’m sorry they forgot me.”
 
+You stand there longer than you need to.
 
-## Region 4: The Tower Where Time Slips
+---
 
-**Math Theme:** Functions & Graphs
-**Mood:** Melancholy, reflective
+## Region 4  
+### The Tower Where Time Slips
 
-### Story
+**Math Theme:** Functions & Graphs  
+**Mood:** Melancholy. Soft. Painful in a quiet way.
 
-Time moves unevenly.
-A minute upstairs equals a year below.
+#### Story
+
+Time behaves strangely here.
+
+A minute on one floor is a year on another.
+Voices echo from moments that already passed.
 
 You see memories overlap.
-Faces you once loved appear… then vanish.
+Faces you once knew.
+Faces you tried to forget.
 
-### Trial
+Your companion doesn’t fully understand what’s happening.
+That’s probably for the best.
 
-* Understand how values change over time
-* Read graphs as *stories*
-* Predict outcomes, not just answers
+#### Trial
 
-### Core Line
+- Understand how values change over time  
+- Read graphs as stories, not charts  
+- Predict outcomes instead of reacting to them  
 
-> “Time isn’t broken.
+#### Core Line
+
+> “Time isn’t broken.  
 > It’s just following a function you don’t understand yet.”
 
+You wish someone had told you that earlier.
+
 ---
 
-## Final Region: The Sky Archive
+## Final Region  
+### The Sky Archive
 
-**Math Theme:** Logic & Proof
-**Mood:** Peaceful acceptance
+**Math Theme:** Logic & Proof  
+**Mood:** Calm. Clear. Final.
 
-### Truth Revealed
+#### Truth
 
 The Eternal Equation was never destroyed.
-It was **split**, because humans feared its power.
-The Sage chose obscurity so the world could move freely.
-You must decide:
 
-* **Restore it completely**
-* OR **leave it fragmented**, letting the world remain imperfect but alive
+It was split.
+
+Humans feared it.
+They feared a truth that could explain too much.
+
+The Sage chose obscurity so the world could stay free.
+Messy.
+Human.
+
+Now the fragments are here.
+
+And the choice is yours.
 
 ---
 
-# Endings (Multiple)
+## Endings
 
 ### Ending A: Restoration
 
-The Equation is complete.
-Magic stabilizes.
-History becomes fixed.
+You restore the Equation completely.
 
-But the world stops changing.
+Magic stabilizes.  
+History stops changing.  
+Nothing is forgotten ever again.
 
-### Ending B: Acceptance (Canon Frieren Style)
+The world is perfect.
 
-You leave the Equation incomplete.
-The world remains flawed.
-But people keep learning, forgetting, growing.
+And very still.
 
+---
 
+### Ending B: Acceptance
 
-sorry im autistic :>
+You leave the Equation fragmented.
+
+The world remains flawed.  
+People forget.  
+They relearn.  
+They move on.
+
+You walk away.
+
+> Not everything needs to last forever.
+
