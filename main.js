@@ -269,10 +269,11 @@ function createCentralStatue() {
     sword.rotation.set(-0.2, 0.2, -0.4);
     himmel.add(sword);
 
-    himmel.position.set(0, 2.5, -1.5);
+    himmel.position.set(0, 2.5, 1.2);
+    himmel.scale.set(1.4, 1.4, 1.4);
     statueGroup.add(himmel);
 
-    // --- Frieren (Elfiee) - Far Left ---
+    // --- Frieren (Elfie) - Left ---
     const frieren = new THREE.Group();
     const fHead = new THREE.Group();
     fHead.add(createStyledMesh(new THREE.SphereGeometry(0.32, 16, 16), lightStone));
@@ -282,17 +283,17 @@ function createCentralStatue() {
     const tailPathR = [new THREE.Vector3(0.2, 0.2, -0.1), new THREE.Vector3(0.5, 0, 0), new THREE.Vector3(0.7, -1.2, 0.1)];
     fHead.add(createCurveMesh(tailPathL, lightStone));
     fHead.add(createCurveMesh(tailPathR, lightStone));
-    fHead.position.y = 2.0; // Taller
+    fHead.position.y = 2.0;
     frieren.add(fHead);
 
-    // Dress (Lathe) - Taller
+    // Dress (Lathe)
     const dressPts = [new THREE.Vector2(0.2, 2.0), new THREE.Vector2(0.35, 1.2), new THREE.Vector2(0.65, 0)];
     const dress = createLathe(dressPts, stoneColor);
     frieren.add(dress);
 
-    // Improved Staff (i love frierens staff)
+    // Staff
     const staff = new THREE.Group();
-    staff.add(createStyledMesh(new THREE.CylinderGeometry(0.05, 0.05, 5.0), darkStone)); // Longer staff
+    staff.add(createStyledMesh(new THREE.CylinderGeometry(0.05, 0.05, 5.0), darkStone));
     const cresGeo = new THREE.TorusGeometry(0.4, 0.06, 8, 32, Math.PI * 1.3);
     const cres = createStyledMesh(cresGeo, 0xffeeaa);
     cres.position.y = 2.5;
@@ -305,24 +306,25 @@ function createCentralStatue() {
     staff.rotation.z = 0.1;
     frieren.add(staff);
 
-    frieren.position.set(-2.5, 2.5, 0.5);
-    frieren.rotation.y = 0.4;
+    frieren.position.set(-1.8, 2.5, 1.2);
+    frieren.rotation.y = 0.2;
+    frieren.scale.set(1.4, 1.4, 1.4);
     statueGroup.add(frieren);
 
-    // --- Heiter (Priest) - Far Right ---
+    // --- Heiter (Priest) - Right ---
     const heiter = new THREE.Group();
     const heHead = new THREE.Group();
     heHead.add(createStyledMesh(new THREE.SphereGeometry(0.35, 16, 16), lightStone));
     addFaceFeatures(heHead);
-    heHead.position.y = 2.2; // Taller
+    heHead.position.y = 2.2;
     heiter.add(heHead);
 
-    // Robes - Taller
+    // Robes
     const robePts = [new THREE.Vector2(0.35, 2.2), new THREE.Vector2(0.5, 1.2), new THREE.Vector2(0.6, 0)];
     const robes = createLathe(robePts, stoneColor);
     heiter.add(robes);
 
-    // Stole - Longer
+    // Stole
     const stolePath = [new THREE.Vector3(-0.35, 2.1, 0.1), new THREE.Vector3(0, 1.9, 0.3), new THREE.Vector3(0.35, 2.1, 0.1)];
     heiter.add(createCurveMesh(stolePath, darkStone));
 
@@ -333,8 +335,9 @@ function createCentralStatue() {
     hStaff.position.set(0.6, 1.8, 0);
     heiter.add(hStaff);
 
-    heiter.position.set(2.5, 2.5, 0.5);
-    heiter.rotation.y = -0.4;
+    heiter.position.set(1.8, 2.5, 1.2);
+    heiter.rotation.y = -0.2;
+    heiter.scale.set(1.4, 1.4, 1.4);
     statueGroup.add(heiter);
 
     // --- Eisen (Dwarf) - Front Center Offset ---
@@ -352,11 +355,11 @@ function createCentralStatue() {
     beardC.position.set(0, -0.45, 0.35);
     beardC.rotation.x = -0.3;
     eHead.add(beardC);
-    eHead.position.y = 1.4; // Slightly taller (dwarves are sturdy but short, but let's give him a bit)
+    eHead.position.y = 1.4;
     eisen.add(eHead);
 
     // Body
-    const armor = createStyledMesh(new THREE.CylinderGeometry(0.65, 0.7, 1.5, 8), darkStone); // Taller armor
+    const armor = createStyledMesh(new THREE.CylinderGeometry(0.65, 0.7, 1.5, 8), darkStone);
     armor.position.y = 0.75;
     eisen.add(armor);
 
@@ -367,11 +370,12 @@ function createCentralStatue() {
     axeBlade.position.y = 1;
     axe.add(axeBlade);
     axe.rotation.set(0.2, 0.2, 0.2);
-    axe.position.set(-0.9, 1.0, 0.4);
+    axe.position.set(0.9, 1.0, 0.4);
     eisen.add(axe);
 
-    eisen.position.set(-0.8, 2.5, 2.0);
+    eisen.position.set(-0.9, 2.5, 2.0);
     eisen.rotation.y = 0.2;
+    eisen.scale.set(1.4, 1.4, 1.4);
     statueGroup.add(eisen);
 
     statueGroup.position.set(0, 0, 40);
@@ -584,10 +588,18 @@ window.addEventListener('keydown', (e) => {
 });
 window.addEventListener('keyup', (e) => keys[e.code] = false);
 
+// click now mainly handles Pointer Lock. 
+// story progress is handled by SPACE key 
+/*
 window.addEventListener('mousedown', (e) => {
     if (e.target.closest('#story-box')) return;
-    nextPage();
+    if (document.pointerLockElement) {
+        // if already locked, maybe shooting or interacting with objects
+        // for now, do nothing or
+        // nextPage(); 
+    }
 });
+*/
 
 function nextPage() {
     currentPage = (currentPage + 1) % pages.length;
@@ -595,29 +607,104 @@ function nextPage() {
     generateEnvironment();
 }
 
-const speed = 0.2;
-const turnSpeed = 0.03;
+camera.rotation.order = 'YXZ'; 
+
+// mouse Look Variables
+let pitch = 0;
+let yaw = 0;
+
+document.addEventListener('click', () => {
+    document.body.requestPointerLock();
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (document.pointerLockElement === document.body) {
+        yaw -= e.movementX * 0.002;
+        pitch -= e.movementY * 0.002;
+        //i have no idea why btu it will avoid flitching
+        pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, pitch));
+
+        camera.rotation.x = pitch;
+        camera.rotation.y = yaw;
+    }
+});
+
+// a little physics
+const velocity = new THREE.Vector3();
+const maxSpeed = 0.15;
+const acceleration = 0.015;
+const deceleration = 0.01;
+const swayAmount = 0.05;
+const swaySpeed = 8;
+let swayTime = 0;
+
 
 function update() {
-    if (keys['KeyA']) camera.rotation.y += turnSpeed;
-    if (keys['KeyD']) camera.rotation.y -= turnSpeed;
     const fwd = new THREE.Vector3();
     camera.getWorldDirection(fwd);
-    fwd.y = 0; fwd.normalize();
-    const rgt = new THREE.Vector3().crossVectors(camera.up, fwd).normalize();
-    if (keys['KeyW']) camera.position.addScaledVector(fwd, speed);
-    if (keys['KeyS']) camera.position.addScaledVector(fwd, -speed);
-    if (keys['KeyQ']) camera.position.addScaledVector(rgt, speed);
-    if (keys['KeyE']) camera.position.addScaledVector(rgt, -speed);
+    fwd.y = 0; 
+    fwd.normalize();
+
+    // Right / Left Direction
+    const rgt = new THREE.Vector3();
+    rgt.crossVectors(fwd, camera.up).normalize();
+
+    // Input Vector
+    const inputVector = new THREE.Vector3();
+    if (keys['KeyW']) inputVector.add(fwd);
+    if (keys['KeyS']) inputVector.sub(fwd);
+    if (keys['KeyA']) inputVector.sub(rgt);
+    if (keys['KeyD']) inputVector.add(rgt);
+
+    // normalize input to prevent faster diagonal movement
+    // But we want to keep the direction valid
+    if (inputVector.lengthSq() > 0) {
+        inputVector.normalize();
+
+        // Acceleration: Move velocity towards target speed in input direction (increase velocity slowly slowly)
+        const targetVelocity = inputVector.multiplyScalar(maxSpeed);
+        velocity.lerp(targetVelocity, acceleration);
+    } else {
+        // Deceleration: Lerp velocity towards zero (feels like sliding)
+        velocity.lerp(new THREE.Vector3(0, 0, 0), deceleration);
+    }
+
+    // Apply movement
+    camera.position.add(velocity);
+
+    
+    const speedFraction = velocity.length() / maxSpeed;
+    if (speedFraction > 0.1) {
+        swayTime += 0.015 * swaySpeed; 
+
+        // Tilt (Roll) - leans into the turn slightly or rhythmic sway
+        // Actually, simple sway based on strafing velocity is nice
+        const strafeVelocity = velocity.dot(rgt); // how much we are moving sideways
+        const targetRoll = -strafeVelocity * 0.5; //lean into movement
+
+        // Bobbing (Y-axis)
+        // Only bob if moving
+        const bobOffset = Math.sin(swayTime) * 0.05 * speedFraction;
+        camera.position.y = 1.6 + bobOffset;
+
+        // Apply Roll to camera rotation (We need to be careful with coordinate systems)
+        // Since im managing pitch manually in mousemove,i can just add a roll offset there or modify the up vector.
+        // A simpler way for sway is just modifying z-rotation lightly :)
+        camera.rotation.z = THREE.MathUtils.lerp(camera.rotation.z, targetRoll, 0.1);
+
+    } else {
+        
+        camera.position.y = THREE.MathUtils.lerp(camera.position.y, 1.6, 0.1);
+        camera.rotation.z = THREE.MathUtils.lerp(camera.rotation.z, 0, 0.1);
+        swayTime = 0;
+    }
+
 
     // Move infinite ground/stars with camera
     ground.position.x = camera.position.x;
     ground.position.z = camera.position.z;
     stars.position.x = camera.position.x;
     stars.position.z = camera.position.z;
-
-    const moving = keys['KeyW'] || keys['KeyS'] || keys['KeyA'] || keys['KeyD'] || keys['KeyQ'] || keys['KeyE'];
-    camera.position.y = moving ? 1.6 + Math.sin(Date.now() * 0.01) * 0.06 : THREE.MathUtils.lerp(camera.position.y, 1.6, 0.1);
 }
 
 function animate() {
