@@ -886,9 +886,109 @@ window.addEventListener('mousedown', (e) => {
 });
 */
 
+
+
+const MURF_API_KEY = 'ap2_0eac8215-deb6-4b54-bfbe-edcffbc05053';
+let currentAudio = null;
+let voiceId = null;
+
+async function getVoiceId() {
+    if (voiceId) return voiceId;
+    try {
+        const response = await fetch('https://api.murf.ai/v1/speech/voices', {
+            headers: {
+                'api-key': MURF_API_KEY
+            }
+        });
+        const voices = await response.json();
+        //female voices are the best
+        const preferred = voices.find(v => v.locale === 'en-US' && v.gender === 'FEMALE');
+        voiceId = preferred ? preferred.voiceId : voices[0].voiceId;
+        console.log('Selected Voice ID:', voiceId);
+        return voiceId;
+    } catch (e) {
+        console.error('Failed to fetch voices:', e);
+        return null;
+    }
+}
+
+async function playTTS(text) {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+    }
+
+    // simple text cleanup if needed
+    const cleanText = text.replace(/["']/g, "");
+
+    try {
+        const vId = await getVoiceId();
+        if (!vId) return;
+
+        const response = await fetch('https://api.murf.ai/v1/speech/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'api-key': MURF_API_KEY
+            },
+            body: JSON.stringify({
+                voiceId: vId,
+                text: cleanText,
+                style: 'General',
+                rate: 0,
+                pitch: 0,
+                sampleRate: 48000,
+                format: 'MP3',
+                channelType: 'MONO',
+                encodeAsBase64: false,
+                variation: 1,
+                audioDuration: 0,
+                modelVersion: 'GEN2',
+                multiNativeLocale: 'en-US'
+            })
+        });
+
+        const data = await response.json();
+        if (data.audioFile) {
+            currentAudio = new Audio(data.audioFile);
+            currentAudio.play();
+        }
+    } catch (e) {
+        console.error('TTS Error:', e);
+    }
+}
+
+
+let textAnimationInterval = null;
+const storyBox = document.getElementById('story-box'); 
+
+function animateText(text) {
+    storyTextElement.innerHTML = ''; 
+   
+    
+
+    // implement word-by-word typing
+    const words = text.split(' ');
+    let wordIndex = 0;
+
+    if (textAnimationInterval) clearInterval(textAnimationInterval);
+
+    // Instead of raw text, let's build it.
+    textAnimationInterval = setInterval(() => {
+        if (wordIndex < words.length) {
+            storyTextElement.innerText += (wordIndex === 0 ? '' : ' ') + words[wordIndex];
+            wordIndex++;
+        } else {
+            clearInterval(textAnimationInterval);
+        }
+    }, 100); // 100ms per word
+}
+
 function nextPage() {
     currentPage = (currentPage + 1) % pages.length;
-    storyTextElement.innerText = pages[currentPage].text;
+    // storyTextElement.innerText = pages[currentPage].text; // OLD
+    animateText(pages[currentPage].text);
+    playTTS(pages[currentPage].text); // TTS
     generateEnvironment();
 }
 
@@ -922,7 +1022,7 @@ const deceleration = 0.01;
 const swayAmount = 0.05;
 const swaySpeed = 8;
 let swayTime = 0;
-
+let uiOpacity = 1.0;
 
 function update() {
     const fwd = new THREE.Vector3();
@@ -959,6 +1059,19 @@ function update() {
 
 
     const speedFraction = velocity.length() / maxSpeed;
+
+    // Move -> fade out (0), Stop -> fade in (1)
+    // Slew rate for opacity
+    const targetOpacity = speedFraction > 0.1 ? 0.0 : 1.0;
+    uiOpacity = THREE.MathUtils.lerp(uiOpacity, targetOpacity, 0.05);
+
+    
+    if (storyBox) {
+        storyBox.style.opacity = uiOpacity;
+    } else {
+        storyTextElement.style.opacity = uiOpacity;
+    }
+
     if (speedFraction > 0.1) {
         swayTime += 0.015 * swaySpeed;
 
@@ -991,6 +1104,7 @@ function update() {
     stars.position.x = camera.position.x;
     stars.position.z = camera.position.z;
 }
+
 
 function animate() {
     requestAnimationFrame(animate);
