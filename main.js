@@ -83,24 +83,7 @@ function createStyledMesh(geometry, color, opacity = 1, useOutline = false) {
     return group;
 }
 
-function createGrass() {
-    const grassCount = 8000;
-    const geometry = new THREE.BufferGeometry();
-    const positions = [];
-    const colors = [];
-    for (let i = 0; i < grassCount; i++) {
-        const x = (Math.random() - 0.5) * 200;
-        const z = (Math.random() - 0.5) * 200;
-        const h = 0.15 + Math.random() * 0.4;
-        positions.push(x, 0, z, x + (Math.random() - 0.5) * 0.2, h, z + (Math.random() - 0.5) * 0.2);
 
-        const shade = 0.4 + Math.random() * 0.4;
-        colors.push(0.1 * shade, 0.8 * shade, 0.2 * shade, 0.1 * shade, 0.8 * shade, 0.2 * shade);
-    }
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-    return new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.7 }));
-}
 
 function createRock(x, z, s) {
     const geo = new THREE.DodecahedronGeometry(s, 0);
@@ -289,7 +272,7 @@ function createCentralStatue() {
     himmel.position.set(0, 2.5, -1.5);
     statueGroup.add(himmel);
 
-    // --- Frieren (Elf) - Far Left ---
+    // --- Frieren (Elfiee) - Far Left ---
     const frieren = new THREE.Group();
     const fHead = new THREE.Group();
     fHead.add(createStyledMesh(new THREE.SphereGeometry(0.32, 16, 16), lightStone));
@@ -307,7 +290,7 @@ function createCentralStatue() {
     const dress = createLathe(dressPts, stoneColor);
     frieren.add(dress);
 
-    // Improved Staff
+    // Improved Staff (i love frierens staff)
     const staff = new THREE.Group();
     staff.add(createStyledMesh(new THREE.CylinderGeometry(0.05, 0.05, 5.0), darkStone)); // Longer staff
     const cresGeo = new THREE.TorusGeometry(0.4, 0.06, 8, 32, Math.PI * 1.3);
@@ -369,7 +352,7 @@ function createCentralStatue() {
     beardC.position.set(0, -0.45, 0.35);
     beardC.rotation.x = -0.3;
     eHead.add(beardC);
-    eHead.position.y = 1.4; // Slightly taller (Dwarves are sturdy but short, but let's give him a bit)
+    eHead.position.y = 1.4; // Slightly taller (dwarves are sturdy but short, but let's give him a bit)
     eisen.add(eHead);
 
     // Body
@@ -400,10 +383,10 @@ function updateAtmosphere() {
     const angle = cycle * Math.PI * 2 - Math.PI / 2;
     const radius = 300;
 
-    sunGroup.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, -100);
+    sunGroup.position.set(camera.position.x + Math.cos(angle) * radius, Math.sin(angle) * radius, camera.position.z - 100);
     sunLight.position.copy(sunGroup.position);
 
-    moonGroup.position.set(Math.cos(angle + Math.PI) * radius, Math.sin(angle + Math.PI) * radius, -100);
+    moonGroup.position.set(camera.position.x + Math.cos(angle + Math.PI) * radius, Math.sin(angle + Math.PI) * radius, camera.position.z - 100);
     moonLight.position.copy(moonGroup.position);
 
     const noonColor = new THREE.Color(0x87ceeb); // Clear sky blue
@@ -469,35 +452,126 @@ function updateAtmosphere() {
     clockElement.innerText = `${displayHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
 }
 
+const CHUNK_SIZE = 60;
+const PRELOAD_RADIUS = 2; // In chunks (2 = 5x5 grid)
+const activeChunks = new Map();
+
+// Helper to get consistent random numbers for a chunk
+function seededRandom(seed) {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+}
+
+function getChunkKey(cx, cz) {
+    return `${cx}:${cz}`;
+}
+
+function createChunk(cx, cz) {
+    const chunkGroup = new THREE.Group();
+    const chunkSeed = cx * 1000 + cz; // Simple seed
+
+    // Offset for this chunk in world space
+    const offsetX = cx * CHUNK_SIZE;
+    const offsetZ = cz * CHUNK_SIZE;
+
+    // Create Grass for this chunk (Local logic)
+    const grassGeo = new THREE.BufferGeometry();
+    const positions = [];
+    const colors = [];
+    const grassCount = 400;
+
+    for (let i = 0; i < grassCount; i++) {
+        // Local position within chunk
+        const lx = (seededRandom(chunkSeed + i) - 0.5) * CHUNK_SIZE;
+        const lz = (seededRandom(chunkSeed + i + 10000) - 0.5) * CHUNK_SIZE;
+
+        // World position
+        const wx = offsetX + lx;
+        const wz = offsetZ + lz;
+
+        const h = 0.15 + seededRandom(chunkSeed + i * 2) * 0.4;
+
+        // Add grass line segment
+        // Tip of grass blade moves slightly
+        const sway = (seededRandom(chunkSeed + i * 3) - 0.5) * 0.2;
+        positions.push(wx, 0, wz, wx + sway, h, wz + sway);
+
+        const shade = 0.4 + seededRandom(chunkSeed + i * 5) * 0.4;
+        colors.push(0.1 * shade, 0.8 * shade, 0.2 * shade, 0.1 * shade, 0.8 * shade, 0.2 * shade);
+    }
+    grassGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    grassGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    const grass = new THREE.LineSegments(grassGeo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.7 }));
+    chunkGroup.add(grass);
+
+    // Create Rocks (1-3 per chunk) T-T im crying
+    const rockCount = Math.floor(seededRandom(chunkSeed) * 3) + 1;
+    for (let i = 0; i < rockCount; i++) {
+        const lx = (seededRandom(chunkSeed + i + 100) - 0.5) * CHUNK_SIZE;
+        const lz = (seededRandom(chunkSeed + i + 200) - 0.5) * CHUNK_SIZE;
+        const s = 0.5 + seededRandom(chunkSeed + i + 300) * 1.5;
+        const rock = createRock(offsetX + lx, offsetZ + lz, s);
+        chunkGroup.add(rock);
+    }
+
+    // Create Trees (1-3 per chunk)
+    const treeCount = Math.floor(seededRandom(chunkSeed + 500) * 3) + 1;
+    for (let i = 0; i < treeCount; i++) {
+        const lx = (seededRandom(chunkSeed + i + 600) - 0.5) * CHUNK_SIZE;
+        const lz = (seededRandom(chunkSeed + i + 700) - 0.5) * CHUNK_SIZE;
+        const h = 5 + seededRandom(chunkSeed + i + 800) * 4;
+
+        // Don't spawn trees too close to the statue in the center chunk
+        if (cx === 0 && cz === 0 && Math.abs(lx) < 10 && Math.abs(lz - 40) < 10) continue;
+
+        const tree = createTree(offsetX + lx, offsetZ + lz, h);
+        chunkGroup.add(tree);
+    }
+
+    world.add(chunkGroup);
+    return chunkGroup;
+}
+
+function updateWorldChunks() {
+    const playerCX = Math.round(camera.position.x / CHUNK_SIZE);
+    const playerCZ = Math.round(camera.position.z / CHUNK_SIZE);
+
+    const neededChunks = new Set();
+    for (let x = -PRELOAD_RADIUS; x <= PRELOAD_RADIUS; x++) {
+        for (let z = -PRELOAD_RADIUS; z <= PRELOAD_RADIUS; z++) {
+            neededChunks.add(getChunkKey(playerCX + x, playerCZ + z));
+        }
+    }
+
+    for (const [key, group] of activeChunks) {
+        if (!neededChunks.has(key)) {
+            world.remove(group);
+            // safe disposal if needed
+            activeChunks.delete(key);
+        }
+    }
+
+    for (const key of neededChunks) {
+        if (!activeChunks.has(key)) {
+            const [cx, cz] = key.split(':').map(Number);
+            activeChunks.set(key, createChunk(cx, cz));
+        }
+    }
+}
+
 function generateEnvironment() {
     world.clear();
-    const config = pages[currentPage];
+    activeChunks.clear();
 
     world.add(sunGroup);
     world.add(moonGroup);
-    world.add(createGrass());
 
+    // Add persistent central statue
     world.add(createCentralStatue());
 
-    for (let i = 0; i < 40; i++) {
-        const a = Math.random() * Math.PI * 2;
-        const r = 15 + Math.random() * 85;
-        world.add(createRock(Math.cos(a) * r, Math.sin(a) * r, 0.5 + Math.random() * 1.5));
-    }
 
-    for (let i = 0; i < 35; i++) {
-        const a = Math.random() * Math.PI * 2;
-        const r = 20 + Math.random() * 80;
-        world.add(createTree(Math.cos(a) * r, Math.sin(a) * r, 5 + Math.random() * 4));
-    }
 
-    if (config.bg === 'party_heroes') {
-        const monolith = createStyledMesh(new THREE.BoxGeometry(4, 10, 4), 0xffffff, 0.9, false);
-        monolith.position.set(0, 5, 30);
-        world.add(monolith);
-    } else if (config.bg.includes('statue')) {
-        // Placeholder or specific statue adjustments can go here
-    }
+    updateWorldChunks();
 }
 
 generateEnvironment();
@@ -535,6 +609,13 @@ function update() {
     if (keys['KeyS']) camera.position.addScaledVector(fwd, -speed);
     if (keys['KeyQ']) camera.position.addScaledVector(rgt, speed);
     if (keys['KeyE']) camera.position.addScaledVector(rgt, -speed);
+
+    // Move infinite ground/stars with camera
+    ground.position.x = camera.position.x;
+    ground.position.z = camera.position.z;
+    stars.position.x = camera.position.x;
+    stars.position.z = camera.position.z;
+
     const moving = keys['KeyW'] || keys['KeyS'] || keys['KeyA'] || keys['KeyD'] || keys['KeyQ'] || keys['KeyE'];
     camera.position.y = moving ? 1.6 + Math.sin(Date.now() * 0.01) * 0.06 : THREE.MathUtils.lerp(camera.position.y, 1.6, 0.1);
 }
@@ -543,6 +624,7 @@ function animate() {
     requestAnimationFrame(animate);
     updateAtmosphere();
     update();
+    updateWorldChunks();
     renderer.render(scene, camera);
 }
 animate();
