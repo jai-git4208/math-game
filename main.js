@@ -187,149 +187,208 @@ function createCentralStatue() {
     const darkStone = 0x555555;
     const mossColor = 0x224422;
 
-    // Plinth (Three tiers with "moss")
-    const base = createStyledMesh(new THREE.CylinderGeometry(8, 9, 1.5, 8), darkStone);
-    const mid = createStyledMesh(new THREE.CylinderGeometry(7, 7.5, 1, 8), stoneColor);
+    // --- Helpers ---
+    function createCurveMesh(points, color) {
+        const path = new THREE.CatmullRomCurve3(points);
+        const geo = new THREE.TubeGeometry(path, 8, 0.1, 8, false);
+        return createStyledMesh(geo, color);
+    }
+
+    function createLathe(points, color, segments = 16) {
+        const geo = new THREE.LatheGeometry(points, segments);
+        return createStyledMesh(geo, color);
+    }
+
+    function addFaceFeatures(headGroup, type = 'human') {
+        const eyeColor = 0x333333;
+        // Eyes
+        const eyeGeo = new THREE.CapsuleGeometry(0.04, 0.08, 4, 8);
+        const lEye = createStyledMesh(eyeGeo, eyeColor);
+        lEye.position.set(-0.12, 0.05, 0.3);
+        lEye.rotation.z = Math.PI / 2;
+        const rEye = createStyledMesh(eyeGeo, eyeColor);
+        rEye.position.set(0.12, 0.05, 0.3);
+        rEye.rotation.z = Math.PI / 2;
+        headGroup.add(lEye, rEye);
+
+        // Brows
+        const browGeo = new THREE.BoxGeometry(0.12, 0.02, 0.05);
+        const lBrow = createStyledMesh(browGeo, stoneColor);
+        lBrow.position.set(-0.12, 0.12, 0.32);
+        lBrow.rotation.z = 0.1;
+        const rBrow = createStyledMesh(browGeo, stoneColor);
+        rBrow.position.set(0.12, 0.12, 0.32);
+        rBrow.rotation.z = -0.1;
+        headGroup.add(lBrow, rBrow);
+
+        // Nose
+        if (type !== 'dwarf') {
+            const nose = createStyledMesh(new THREE.ConeGeometry(0.04, 0.1, 4), stoneColor);
+            nose.position.set(0, 0, 0.35);
+            nose.rotation.x = -0.2;
+            headGroup.add(nose);
+        }
+    }
+
+    // --- Base ---
+    const base = createStyledMesh(new THREE.CylinderGeometry(8, 9, 1.5, 16), darkStone);
+    const mid = createStyledMesh(new THREE.CylinderGeometry(7, 7.5, 1, 16), stoneColor);
     mid.position.y = 1.25;
-    const top = createStyledMesh(new THREE.CylinderGeometry(6, 6.5, 0.5, 8), lightStone);
-    top.position.y = 2;
+    const top = createStyledMesh(new THREE.CylinderGeometry(6.5, 7, 0.8, 16), lightStone);
+    top.position.y = 2.15;
     statueGroup.add(base, mid, top);
 
-    // Mossy bits
-    for (let i = 0; i < 12; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const dist = 6 + Math.random() * 2;
-        const moss = createStyledMesh(new THREE.BoxGeometry(0.5, 0.2, 0.5), mossColor);
-        moss.position.set(Math.cos(angle) * dist, 0.8, Math.sin(angle) * dist);
+    // Moss
+    for (let i = 0; i < 15; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const r = 6.0 + Math.random() * 2.5;
+        const moss = createStyledMesh(new THREE.DodecahedronGeometry(0.3, 0), mossColor);
+        moss.position.set(Math.cos(a) * r, 0.8 + Math.random() * 1, Math.sin(a) * r);
         statueGroup.add(moss);
     }
 
-    // Helper to add a head with hair/ears
-    function addHeroHead(parent, color, type = 'human') {
-        const headGroup = new THREE.Group();
-        const head = createStyledMesh(new THREE.SphereGeometry(0.35, 8, 8), color);
-        headGroup.add(head);
-
-        if (type === 'elf') {
-            const lEar = createStyledMesh(new THREE.ConeGeometry(0.1, 0.4, 4), color);
-            lEar.position.set(-0.35, 0, 0);
-            lEar.rotation.z = Math.PI / 2.5;
-            const rEar = createStyledMesh(new THREE.ConeGeometry(0.1, 0.4, 4), color);
-            rEar.position.set(0.35, 0, 0);
-            rEar.rotation.z = -Math.PI / 2.5;
-            headGroup.add(lEar, rEar);
-        }
-
-        headGroup.position.y = 2.8;
-        parent.add(headGroup);
-        return headGroup;
-    }
-
-    // Himmel (Hero)
+    // --- Himmel (Hero) - Center Back ---
     const himmel = new THREE.Group();
-    const himmelBody = createStyledMesh(new THREE.CapsuleGeometry(0.5, 2.2, 4, 8), stoneColor);
-    himmelBody.position.y = 1.2;
-    himmel.add(himmelBody);
-    addHeroHead(himmel, lightStone);
+    // Head
+    const hHead = new THREE.Group();
+    hHead.add(createStyledMesh(new THREE.SphereGeometry(0.35, 16, 16), lightStone));
+    addFaceFeatures(hHead);
+    const bangPath = [new THREE.Vector3(-0.3, 0.3, 0), new THREE.Vector3(-0.25, 0.1, 0.3), new THREE.Vector3(0, 0.2, -0.1)];
+    hHead.add(createCurveMesh(bangPath, lightStone));
+    hHead.position.y = 2.3; // Taller
+    himmel.add(hHead);
 
-    const cape = createStyledMesh(new THREE.CylinderGeometry(0.7, 1.2, 2.5, 8, 1, true, 0, Math.PI), stoneColor);
-    cape.position.set(0, 1.2, -0.4);
-    cape.rotation.x = 0.1;
+    // Body (Coat) - Stretched
+    const coatPts = [];
+    for (let i = 0; i <= 10; i++) {
+        coatPts.push(new THREE.Vector2(0.3 + i * 0.05, i * 0.22)); // Taller segments
+    }
+    const coat = createLathe(coatPts, stoneColor);
+    coat.rotation.x = Math.PI;
+    coat.position.y = 2.2;
+    himmel.add(coat);
+
+    // Cape flow - Adjusted
+    const capePath = [new THREE.Vector3(0, 2.1, -0.2), new THREE.Vector3(0.1, 1.2, -0.8), new THREE.Vector3(0.4, 0.2, -1.0)];
+    const cape = createStyledMesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(capePath), 8, 0.4, 8, false), darkStone);
     himmel.add(cape);
 
+    // Sword (Detailed)
     const sword = new THREE.Group();
-    const blade = createStyledMesh(new THREE.BoxGeometry(0.1, 2.5, 0.4), lightStone);
-    const guard = createStyledMesh(new THREE.BoxGeometry(0.8, 0.15, 0.2), darkStone);
-    guard.position.y = -1.25;
-    const hilt = createStyledMesh(new THREE.CylinderGeometry(0.08, 0.08, 0.6), darkStone);
-    hilt.position.y = -1.6;
-    sword.add(blade, guard, hilt);
-    sword.position.set(1.4, 4.2, 0);
-    sword.rotation.z = -Math.PI / 6;
+    const blade = createStyledMesh(new THREE.BoxGeometry(0.08, 2.8, 0.15), lightStone); // Longer blade
+    const guard = createStyledMesh(new THREE.CylinderGeometry(0.3, 0.05, 0.1, 4), darkStone);
+    guard.rotation.z = Math.PI / 2;
+    guard.position.y = -1.4;
+    const pommel = createStyledMesh(new THREE.SphereGeometry(0.1), darkStone);
+    pommel.position.y = -1.8;
+    sword.add(blade, guard, pommel);
+    sword.position.set(0.9, 3.2, 0.4);
+    sword.rotation.set(-0.2, 0.2, -0.4);
     himmel.add(sword);
 
-    himmel.position.set(0, 2.2, 0);
+    himmel.position.set(0, 2.5, -1.5);
     statueGroup.add(himmel);
 
-    // Frieren (Elf)
+    // --- Frieren (Elf) - Far Left ---
     const frieren = new THREE.Group();
-    const frierenBody = createStyledMesh(new THREE.CapsuleGeometry(0.4, 2, 4, 8), stoneColor);
-    frierenBody.position.y = 1.1;
-    frieren.add(frierenBody);
-    addHeroHead(frieren, lightStone, 'elf');
+    const fHead = new THREE.Group();
+    fHead.add(createStyledMesh(new THREE.SphereGeometry(0.32, 16, 16), lightStone));
+    addFaceFeatures(fHead, 'elf');
+    // Twin Tails (Longer)
+    const tailPathL = [new THREE.Vector3(-0.2, 0.2, -0.1), new THREE.Vector3(-0.5, 0, 0), new THREE.Vector3(-0.7, -1.2, 0.1)];
+    const tailPathR = [new THREE.Vector3(0.2, 0.2, -0.1), new THREE.Vector3(0.5, 0, 0), new THREE.Vector3(0.7, -1.2, 0.1)];
+    fHead.add(createCurveMesh(tailPathL, lightStone));
+    fHead.add(createCurveMesh(tailPathR, lightStone));
+    fHead.position.y = 2.0; // Taller
+    frieren.add(fHead);
 
-    const hairL = createStyledMesh(new THREE.CapsuleGeometry(0.15, 2, 4, 8), lightStone);
-    hairL.position.set(-0.4, 1.5, 0.1);
-    const hairR = createStyledMesh(new THREE.CapsuleGeometry(0.15, 2, 4, 8), lightStone);
-    hairR.position.set(0.4, 1.5, 0.1);
-    frieren.add(hairL, hairR);
+    // Dress (Lathe) - Taller
+    const dressPts = [new THREE.Vector2(0.2, 2.0), new THREE.Vector2(0.35, 1.2), new THREE.Vector2(0.65, 0)];
+    const dress = createLathe(dressPts, stoneColor);
+    frieren.add(dress);
 
+    // Improved Staff
     const staff = new THREE.Group();
-    staff.add(createStyledMesh(new THREE.CylinderGeometry(0.08, 0.08, 4.5), darkStone));
-    const sHead = createStyledMesh(new THREE.TorusGeometry(0.4, 0.08, 8, 16, Math.PI * 1.5), lightStone);
-    sHead.position.y = 2.2;
-    sHead.rotation.z = Math.PI / 2;
-    const sCrystal = createStyledMesh(new THREE.OctahedronGeometry(0.25), 0x9999ff, 0.7);
-    sCrystal.position.y = 2.2;
-    staff.add(sHead, sCrystal);
-    staff.position.set(-0.8, 2, 0.5);
+    staff.add(createStyledMesh(new THREE.CylinderGeometry(0.05, 0.05, 5.0), darkStone)); // Longer staff
+    const cresGeo = new THREE.TorusGeometry(0.4, 0.06, 8, 32, Math.PI * 1.3);
+    const cres = createStyledMesh(cresGeo, 0xffeeaa);
+    cres.position.y = 2.5;
+    cres.rotation.z = Math.PI / 1.5;
+    const gem = createStyledMesh(new THREE.OctahedronGeometry(0.15), 0xff3333, 0.9);
+    gem.position.set(0, 2.5, 0);
+    staff.add(cres, gem);
+
+    staff.position.set(0.7, 1.8, 0.5);
+    staff.rotation.z = 0.1;
     frieren.add(staff);
 
-    frieren.position.set(-2.5, 2.2, -0.5);
+    frieren.position.set(-2.5, 2.5, 0.5);
+    frieren.rotation.y = 0.4;
     statueGroup.add(frieren);
 
-    // Heiter (Priest)
+    // --- Heiter (Priest) - Far Right ---
     const heiter = new THREE.Group();
-    const heiterBody = createStyledMesh(new THREE.CapsuleGeometry(0.5, 2.4, 4, 8), stoneColor);
-    heiterBody.position.y = 1.3;
-    heiter.add(heiterBody);
-    addHeroHead(heiter, lightStone);
+    const heHead = new THREE.Group();
+    heHead.add(createStyledMesh(new THREE.SphereGeometry(0.35, 16, 16), lightStone));
+    addFaceFeatures(heHead);
+    heHead.position.y = 2.2; // Taller
+    heiter.add(heHead);
 
-    const staffH = new THREE.Group();
-    staffH.add(createStyledMesh(new THREE.CylinderGeometry(0.1, 0.1, 4.5), darkStone));
-    staffH.add(createStyledMesh(new THREE.SphereGeometry(0.4, 12, 12), lightStone)).position.y = 2.3;
-    staffH.position.set(0.8, 2, 0.5);
-    heiter.add(staffH);
+    // Robes - Taller
+    const robePts = [new THREE.Vector2(0.35, 2.2), new THREE.Vector2(0.5, 1.2), new THREE.Vector2(0.6, 0)];
+    const robes = createLathe(robePts, stoneColor);
+    heiter.add(robes);
 
-    heiter.position.set(2.5, 2.2, -0.5);
+    // Stole - Longer
+    const stolePath = [new THREE.Vector3(-0.35, 2.1, 0.1), new THREE.Vector3(0, 1.9, 0.3), new THREE.Vector3(0.35, 2.1, 0.1)];
+    heiter.add(createCurveMesh(stolePath, darkStone));
+
+    // Holy Staff
+    const hStaff = new THREE.Group();
+    hStaff.add(createStyledMesh(new THREE.CylinderGeometry(0.06, 0.06, 5.0), darkStone));
+    hStaff.add(createStyledMesh(new THREE.SphereGeometry(0.2, 8, 8), lightStone)).position.y = 2.6;
+    hStaff.position.set(0.6, 1.8, 0);
+    heiter.add(hStaff);
+
+    heiter.position.set(2.5, 2.5, 0.5);
+    heiter.rotation.y = -0.4;
     statueGroup.add(heiter);
 
-    // Eisen (Dwarf)
+    // --- Eisen (Dwarf) - Front Center Offset ---
     const eisen = new THREE.Group();
-    const eisenBody = createStyledMesh(new THREE.CapsuleGeometry(0.7, 1.5, 4, 8), darkStone);
-    eisenBody.position.y = 0.8;
-    eisen.add(eisenBody);
-    const eHead = addHeroHead(eisen, lightStone);
+    const eHead = new THREE.Group();
+    eHead.add(createStyledMesh(new THREE.SphereGeometry(0.42, 16, 16), darkStone));
+    addFaceFeatures(eHead, 'dwarf');
+
+    const hornL = createStyledMesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(-0.35, 0.2, 0), new THREE.Vector3(-0.65, 0.6, 0.1)]), 4, 0.08, 8), lightStone);
+    const hornR = createStyledMesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(0.35, 0.2, 0), new THREE.Vector3(0.65, 0.6, 0.1)]), 4, 0.08, 8), lightStone);
+    eHead.add(hornL, hornR);
 
     // Beard
-    const beard = createStyledMesh(new THREE.ConeGeometry(0.35, 1, 8), lightStone);
-    beard.position.y = 2.5;
-    beard.position.z = 0.2;
-    eisen.add(beard);
+    const beardC = createStyledMesh(new THREE.ConeGeometry(0.25, 0.7, 16), lightStone);
+    beardC.position.set(0, -0.45, 0.35);
+    beardC.rotation.x = -0.3;
+    eHead.add(beardC);
+    eHead.position.y = 1.4; // Slightly taller (Dwarves are sturdy but short, but let's give him a bit)
+    eisen.add(eHead);
 
-    // Horned Helmet
-    const helm = createStyledMesh(new THREE.SphereGeometry(0.4, 8, 8, 0, Math.PI * 2, 0, Math.PI / 2), stoneColor);
-    helm.position.y = 3.1;
-    const lHorn = createStyledMesh(new THREE.ConeGeometry(0.1, 0.4, 4), darkStone);
-    lHorn.position.set(-0.3, 3.4, 0);
-    lHorn.rotation.z = 0.5;
-    const rHorn = createStyledMesh(new THREE.ConeGeometry(0.1, 0.4, 4), darkStone);
-    rHorn.position.set(0.3, 3.4, 0);
-    rHorn.rotation.z = -0.5;
-    eisen.add(helm, lHorn, rHorn);
+    // Body
+    const armor = createStyledMesh(new THREE.CylinderGeometry(0.65, 0.7, 1.5, 8), darkStone); // Taller armor
+    armor.position.y = 0.75;
+    eisen.add(armor);
 
+    // Axe
     const axe = new THREE.Group();
-    axe.add(createStyledMesh(new THREE.CylinderGeometry(0.1, 0.1, 3), darkStone));
-    const bladeL = createStyledMesh(new THREE.BoxGeometry(0.8, 1, 0.1), lightStone);
-    bladeL.position.set(0.5, 1, 0);
-    const bladeR = createStyledMesh(new THREE.BoxGeometry(0.8, 1, 0.1), lightStone);
-    bladeR.position.set(-0.5, 1, 0);
-    axe.add(bladeL, bladeR);
-    axe.rotation.x = Math.PI / 2;
-    axe.position.set(1.2, 0.8, 0.8);
+    axe.add(createStyledMesh(new THREE.CylinderGeometry(0.12, 0.12, 3), darkStone));
+    const axeBlade = createStyledMesh(new THREE.BoxGeometry(1.3, 0.9, 0.12), lightStone);
+    axeBlade.position.y = 1;
+    axe.add(axeBlade);
+    axe.rotation.set(0.2, 0.2, 0.2);
+    axe.position.set(-0.9, 1.0, 0.4);
     eisen.add(axe);
 
-    eisen.position.set(0, 2.2, 3);
+    eisen.position.set(-0.8, 2.5, 2.0);
+    eisen.rotation.y = 0.2;
     statueGroup.add(eisen);
 
     statueGroup.position.set(0, 0, 40);
